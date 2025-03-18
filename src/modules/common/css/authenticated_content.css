@@ -6,9 +6,9 @@
 }
 
 .content-container {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 4px;
     width: 400px;
 }
 
