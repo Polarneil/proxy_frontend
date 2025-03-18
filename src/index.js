@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App from './modules/app/App';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const auth0Domain = process.env.REACT_APP_AUTH0_DOMAIN;
+const auth0ClientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
 root.render(
   <React.StrictMode>
     <Auth0Provider
-      domain="dev-fa4vurxahekt1aj5.us.auth0.com" // Replace with your Auth0 domain
-      clientId="6xjXkRu0uGOh80c6LjC7bM5zt2ByL8jc" // Replace with your Auth0 client ID
+      domain={auth0Domain}
+      clientId={auth0ClientId}
       authorizationParams={{
         redirect_uri: "http://localhost:8080/callback",
       }}
