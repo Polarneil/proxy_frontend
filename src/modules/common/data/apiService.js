@@ -42,3 +42,18 @@ export const generateKey = async (models, user) => {
         }
     }
 };
+
+// Check for existing user and conditionally create user
+export const checkUser = async (email) => {
+    try {
+        const response = await axiosInstance.post('/check_user/', { email });
+        return response.data; // Return the full response data from the backend
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data.detail || 'An error occurred';
+            throw new Error(errorMessage);
+        } else {
+            throw new Error('An unexpected error occurred');
+        }
+    }
+};

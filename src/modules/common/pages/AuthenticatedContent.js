@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import { fetchTokenPayload, generateKey } from '../data/apiService';
+import { fetchTokenPayload, generateKey, checkUser } from '../data/apiService'; // Import checkUser
 import '../css/authenticated_content.css';
 import CopyIcon from '@mui/icons-material/ContentCopy';
 
@@ -35,6 +35,19 @@ function AuthenticatedContent() {
                         const decodedPayload = await fetchTokenPayload(rawIdToken);
                         setDecodedToken(decodedPayload);
                         console.log("Decoded Token Payload:", decodedPayload);
+
+                        // Check user on page load
+                        if (decodedPayload && decodedPayload.email) {
+                            try {
+                                const userCheckResult = await checkUser(decodedPayload.email);
+                                console.log('User check result:', userCheckResult);
+                                // Handle user check result here, if needed.
+                            } catch (userCheckError) {
+                                console.error('Error checking user:', userCheckError);
+                                setError("Error checking user.");
+                            }
+                        }
+
                     } catch (decodeError) {
                         console.error("Error decoding token:", decodeError);
                         setError("Error decoding token.");
@@ -76,7 +89,7 @@ function AuthenticatedContent() {
 
     const handleCopyToken = () => {
         if (tokenRef.current) {
-            navigator.clipboard.writeText(tokenRef.current.textContent); // Changed to textContent
+            navigator.clipboard.writeText(tokenRef.current.textContent);
             alert("Token copied to clipboard!");
         }
     };
