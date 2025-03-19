@@ -32,7 +32,52 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.app-header {
+  background-color: #f8f5f2;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.app-logo {
+  height: 40px;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.docs-button {
+  background-color: transparent;
+  color: #3a3a3a;
+  border: none;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.docs-button:hover {
+  transform: scale(1.05);
+}
+
+.user-initials {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
 }

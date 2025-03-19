@@ -1,27 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from '../common/components/loading';
 import AuthenticatedContent from '../common/pages/AuthenticatedContent';
 import logo from '../common/img/logo.svg';
+import DocsPopup from '../common/components/docs';
+import './App.css';
 
 function App() {
   const { isLoading, user } = useAuth0();
+  const [isDocsPopupOpen, setIsDocsPopupOpen] = useState(false);
 
   if (isLoading) {
     return <Loading />;
   }
 
+  const handleDocsClick = () => {
+    setIsDocsPopupOpen(true);
+  };
+
+  const closeDocsPopup = () => {
+    setIsDocsPopupOpen(false);
+  };
+
   return (
-    <div>
-      <header style={{ backgroundColor: '#f8f5f2', padding: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc' }}>
-        <img src={logo} alt="Logo" style={{ height: '40px' }} />
+    <div className="app-container">
+      <header className="app-header">
+        <img src={logo} alt="Logo" className="app-logo" />
         {user && (
-          <div style={{ borderRadius: '50%', width: '40px', height: '40px', backgroundColor: '#ccc', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '16px' }}>
-            {user.name.split(" ").map(word => word[0]).join("").toUpperCase()}
+          <div className="user-actions">
+            <button
+              onClick={handleDocsClick}
+              className="docs-button"
+            >
+              Docs
+            </button>
+            <div className="user-initials">
+              {user.name.split(" ").map(word => word[0]).join("").toUpperCase()}
+            </div>
           </div>
         )}
       </header>
       <AuthenticatedContent />
+      <DocsPopup isOpen={isDocsPopupOpen} onClose={closeDocsPopup} />
     </div>
   );
 }
