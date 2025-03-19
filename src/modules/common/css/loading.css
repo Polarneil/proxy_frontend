@@ -1,32 +1,43 @@
 .loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; /* Make it full height */
-    width: 100vw; /* Make it full width */
-    background-color: rgba(255, 255, 255, 0.8); /* Optional background */
-    position: fixed; /* Optional: cover the entire screen */
-    top: 0;
-    left: 0;
-    z-index: 9999; /* ensure it's on top */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  /* Make it full height */
+  width: 100vw;
+  /* Make it full width */
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Optional background */
+  position: fixed;
+  /* Optional: cover the entire screen */
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  /* ensure it's on top */
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: fit-content;
+  font-weight: bold;
+  font-family: monospace;
+  text-shadow: 
+    0 0 0 rgb(255 0 0), 
+    0 0 0 rgb(0 255 0), 
+    0 0 0 rgb(0 0 255);
+  font-size: 30px;
+  animation: l32 1s infinite cubic-bezier(0.5,-2000,0.5,2000);
+}
+.loader:before {
+  content:"Loading...";
+}
+
+@keyframes l32{
+  25%,100% {
+  text-shadow: 
+     0.03px -0.01px 0.01px rgb(255 0 0), 
+     0.02px  0.02px 0     rgb(0 255 0), 
+    -0.02px  0.02px 0     rgb(0 0 255);
   }
-  
-  .loading-spinner {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    margin-bottom: 10px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  p {
-    font-size: 1.2em;
-  }
+}
