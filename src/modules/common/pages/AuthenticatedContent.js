@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import { fetchTokenPayload, generateKey, checkUser } from '../data/apiService'; // Import checkUser
+import { fetchTokenPayload, generateKey, checkUser } from '../data/apiService';
 import '../css/authenticated_content.css';
 import CopyIcon from '@mui/icons-material/ContentCopy';
 
@@ -15,6 +15,7 @@ function AuthenticatedContent() {
     const [generatedToken, setGeneratedToken] = useState(null);
     const [generateKeyError, setGenerateKeyError] = useState(null);
     const tokenRef = useRef(null);
+    const [greeting, setGreeting] = useState("Hello");
 
     useEffect(() => {
         const fetchTokens = async () => {
@@ -36,12 +37,10 @@ function AuthenticatedContent() {
                         setDecodedToken(decodedPayload);
                         console.log("Decoded Token Payload:", decodedPayload);
 
-                        // Check user on page load
                         if (decodedPayload && decodedPayload.email) {
                             try {
                                 const userCheckResult = await checkUser(decodedPayload.email);
                                 console.log('User check result:', userCheckResult);
-                                // Handle user check result here, if needed.
                             } catch (userCheckError) {
                                 console.error('Error checking user:', userCheckError);
                                 setError("Error checking user.");
@@ -61,6 +60,18 @@ function AuthenticatedContent() {
         };
 
         fetchTokens();
+
+        // Set greeting based on time of day
+        const now = new Date();
+        const hour = now.getHours();
+
+        if (hour >= 5 && hour < 12) {
+            setGreeting("Good morning");
+        } else if (hour >= 12 && hour < 18) {
+            setGreeting("Good afternoon");
+        } else {
+            setGreeting("Good evening");
+        }
     }, [isAuthenticated, getAccessTokenSilently, getIdTokenClaims, auth0Audience]);
 
     const handleModelChange = (model) => {
@@ -102,7 +113,7 @@ function AuthenticatedContent() {
         <div className="authenticated-content">
             {isAuthenticated && decodedToken && decodedToken.name && (
                 <div className="content-container">
-                    <span className="greeting-message">Hello, {decodedToken.name}!</span>
+                    <span className="greeting-message">{greeting}, {decodedToken.name}!</span>
 
                     <div className="model-selection">
                         <span className="select-model-message">Select Models:</span>
@@ -133,7 +144,7 @@ function AuthenticatedContent() {
                             />
                             o1-mini
                         </label>
-                         <label>
+                        <label>
                             <input
                                 type="checkbox"
                                 value="gpt-4o-mini"

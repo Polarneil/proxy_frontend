@@ -31,6 +31,7 @@ export const generateKey = async (models, user) => {
             metadata: {
                 user: user,
             },
+            user_id: user,
         });
         return response.data;
     } catch (error) {
@@ -46,7 +47,7 @@ export const generateKey = async (models, user) => {
 // Check for existing user and conditionally create user
 export const checkUser = async (email) => {
     try {
-        const response = await axiosInstance.post('/check_user/', { email });
+        const response = await axiosInstance.post('/check-user/', { email });
         return response.data; // Return the full response data from the backend
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
