@@ -16,6 +16,7 @@ function AuthenticatedContent() {
     const [generateKeyError, setGenerateKeyError] = useState(null);
     const tokenRef = useRef(null);
     const [greeting, setGreeting] = useState("Hello");
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchTokens = async () => {
@@ -101,7 +102,8 @@ function AuthenticatedContent() {
     const handleCopyToken = () => {
         if (tokenRef.current) {
             navigator.clipboard.writeText(tokenRef.current.textContent);
-            alert("Token copied to clipboard!");
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
         }
     };
 
@@ -162,9 +164,12 @@ function AuthenticatedContent() {
                     {generatedToken && (
                         <div className="token-display">
                             <p ref={tokenRef}>{generatedToken}</p>
-                            <button className="copy-button" onClick={handleCopyToken}>
-                                <CopyIcon />
-                            </button>
+                            {!copied && (
+                                <button className="copy-button" onClick={handleCopyToken}>
+                                    <CopyIcon />
+                                </button>
+                            )}
+                            {copied && <div className="copied-message">Copied!</div>}
                         </div>
                     )}
                 </div>

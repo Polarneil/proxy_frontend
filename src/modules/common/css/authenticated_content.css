@@ -76,6 +76,13 @@
     background-color: #ccc;
 }
 
+.copied-message {
+    background-color: lightgreen;
+    padding: 5px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
 .error-message {
     color: red;
     margin-top: 10px;
