@@ -20,7 +20,7 @@ def chat_completion(messages, model="gpt-4o"):
         response = requests.post(
             f"{LITELLM_API_BASE}/chat/completions", headers=headers, json=payload
         )
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error making API request: {e}")
