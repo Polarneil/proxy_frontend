@@ -6,8 +6,6 @@ import CopyIcon from '@mui/icons-material/ContentCopy';
 
 function AuthenticatedContent() {
     const { isAuthenticated, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
-    const [accessToken, setAccessToken] = useState(null);
-    const [idToken, setIdToken] = useState(null);
     const [decodedToken, setDecodedToken] = useState(null);
     const [error, setError] = useState(null);
     const auth0Audience = process.env.REACT_APP_AUTH0_AUDIENCE;
@@ -25,12 +23,10 @@ function AuthenticatedContent() {
                     const accessTokenValue = await getAccessTokenSilently({
                         audience: auth0Audience,
                     });
-                    setAccessToken(accessTokenValue);
                     console.log("Access Token:", accessTokenValue);
 
                     const idTokenClaimsValue = await getIdTokenClaims();
                     const rawIdToken = idTokenClaimsValue.__raw;
-                    setIdToken(rawIdToken);
                     console.log("ID Token:", rawIdToken);
 
                     try {
