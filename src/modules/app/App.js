@@ -11,7 +11,7 @@ import './App.css';
 
 function App() {
   const { isLoading, user } = useAuth0();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <Loading />;
