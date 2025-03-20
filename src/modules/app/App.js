@@ -1,26 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from '../common/components/loading';
 import AuthenticatedContent from '../common/pages/AuthenticatedContent';
+import DocsPage from '../common/pages/DocsPage';
+import NotFoundPage from '../common/pages/NotFoundPage';
 import logo from '../common/img/logo.svg';
-import DocsPopup from '../common/components/docs';
 import './App.css';
+
 
 function App() {
   const { isLoading, user } = useAuth0();
-  const [isDocsPopupOpen, setIsDocsPopupOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   if (isLoading) {
     return <Loading />;
   }
 
   const handleDocsClick = () => {
-    setIsDocsPopupOpen(true);
-  };
-
-  const closeDocsPopup = () => {
-    setIsDocsPopupOpen(false);
-  };
+    navigate('/docs');
+  }
+  
+  const handleKeysClick = () => {
+    navigate('/');
+  }
 
   return (
     <div className="app-container">
@@ -28,6 +31,12 @@ function App() {
         <img src={logo} alt="Logo" className="app-logo" />
         {user && (
           <div className="user-actions">
+            <button
+              onClick={handleKeysClick}
+              className="docs-button"
+            >
+              Keys
+            </button>
             <button
               onClick={handleDocsClick}
               className="docs-button"
@@ -40,13 +49,25 @@ function App() {
           </div>
         )}
       </header>
-      <AuthenticatedContent />
-      <DocsPopup isOpen={isDocsPopupOpen} onClose={closeDocsPopup} />
+      <Routes>
+        <Route path="/" element={<AuthenticatedContent />} />
+        <Route path="/docs" element={<DocsPage />} />
+        {/* Add more routes here */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </div>
   );
 }
 
-const AuthenticatedApp = withAuthenticationRequired(App, {
+function AppWrapper() {
+  return(
+      <Router>
+          <App/>
+      </Router>
+  )
+}
+
+const AuthenticatedApp = withAuthenticationRequired(AppWrapper, {
   onRedirecting: () => <Loading />,
 });
 

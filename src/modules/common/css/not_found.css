@@ -1,0 +1,11 @@
+.not-found-headers {
+    color: #3a3a3a;
+    font-weight: 700;
+    font-size: 40px;
+}
+
+.not-found-text {
+    color: #3a3a3a;
+    font-weight: 500;
+    font-size: 16px;
+}
