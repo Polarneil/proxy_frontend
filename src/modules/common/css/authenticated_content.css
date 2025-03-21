@@ -9,7 +9,44 @@
     border: 1px solid #ccc;
     padding: 20px;
     border-radius: 4px;
-    width: 400px;
+    width: 350px;
+    margin-right: 20px;
+}
+
+.user-keys-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 4px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-keys-display {
+    font-family: monospace;
+    max-height: 250px;
+    overflow: auto;
+    flex-grow: 1;
+}
+
+.scrollable-key-list {
+    overflow-y: auto;
+    max-height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.key-summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.key-details {
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
 .greeting-message {

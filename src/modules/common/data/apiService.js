@@ -58,3 +58,18 @@ export const checkUser = async (email) => {
         }
     }
 };
+
+// Get user keys
+export const userKeys = async (user_id) => {
+    try {
+        const response = await axiosInstance.post('/user-keys/', { user_id });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            const errorMessage = error.response.data.detail || 'An error occurred';
+            throw new Error(errorMessage);
+        } else {
+            throw new Error('An unexpected error occurred');
+        }
+    }
+};

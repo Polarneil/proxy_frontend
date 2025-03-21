@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import { fetchTokenPayload, generateKey, checkUser } from '../data/apiService';
+import { fetchTokenPayload, generateKey, checkUser, userKeys } from '../data/apiService';
 import '../css/authenticated_content.css';
 import CopyIcon from '@mui/icons-material/ContentCopy';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 function AuthenticatedContent() {
     const { isAuthenticated, getAccessTokenSilently, getIdTokenClaims } = useAuth0();
@@ -15,6 +17,9 @@ function AuthenticatedContent() {
     const tokenRef = useRef(null);
     const [greeting, setGreeting] = useState("Hello");
     const [copied, setCopied] = useState(false);
+    const [userKeysData, setUserKeysData] = useState(null);
+    const [userKeysError, setUserKeysError] = useState(null);
+    const [expandedKeys, setExpandedKeys] = useState({});
 
     useEffect(() => {
         const fetchTokens = async () => {
@@ -35,13 +40,7 @@ function AuthenticatedContent() {
                         console.log("Decoded Token Payload:", decodedPayload);
 
                         if (decodedPayload && decodedPayload.email) {
-                            try {
-                                const userCheckResult = await checkUser(decodedPayload.email);
-                                console.log('User check result:', userCheckResult);
-                            } catch (userCheckError) {
-                                console.error('Error checking user:', userCheckError);
-                                setError("Error checking user.");
-                            }
+                            fetchUserKeys(decodedPayload.email);
                         }
 
                     } catch (decodeError) {
@@ -58,7 +57,6 @@ function AuthenticatedContent() {
 
         fetchTokens();
 
-        // Set greeting based on time of day
         const now = new Date();
         const hour = now.getHours();
 
@@ -70,6 +68,18 @@ function AuthenticatedContent() {
             setGreeting("Good evening");
         }
     }, [isAuthenticated, getAccessTokenSilently, getIdTokenClaims, auth0Audience]);
+
+    const fetchUserKeys = async (email) => {
+        try {
+            const keys = await userKeys(email);
+            setUserKeysData(keys);
+            setUserKeysError(null);
+            console.log('User Keys:', keys);
+        } catch (keysError) {
+            setUserKeysError("Error fetching user keys.");
+            console.error('Error fetching user keys:', keysError);
+        }
+    };
 
     const handleModelChange = (model) => {
         if (selectedModels.includes(model)) {
@@ -85,6 +95,7 @@ function AuthenticatedContent() {
                 const result = await generateKey(selectedModels, decodedToken.email);
                 setGeneratedToken(result.token);
                 setGenerateKeyError(null);
+                fetchUserKeys(decodedToken.email);
             } catch (keyError) {
                 console.error("Error generating key:", keyError);
                 setGenerateKeyError("Error generating key.");
@@ -103,6 +114,13 @@ function AuthenticatedContent() {
         }
     };
 
+    const toggleKeyDetails = (keyName) => {
+        setExpandedKeys(prev => ({
+            ...prev,
+            [keyName]: !prev[keyName],
+        }));
+    };
+
     if (error) {
         return <div className="error-message">Error: {error}</div>;
     }
@@ -110,65 +128,95 @@ function AuthenticatedContent() {
     return (
         <div className="authenticated-content">
             {isAuthenticated && decodedToken && decodedToken.name && (
-                <div className="content-container">
-                    <span className="greeting-message">{greeting}, {decodedToken.name}!</span>
+                <>
+                    <div className="content-container">
+                        <span className="greeting-message">{greeting}, {decodedToken.name}!</span>
 
-                    <div className="model-selection">
-                        <span className="select-model-message">Select Models:</span>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value="gpt-3.5-turbo"
-                                checked={selectedModels.includes("gpt-3.5-turbo")}
-                                onChange={() => handleModelChange("gpt-3.5-turbo")}
-                            />
-                            gpt-3.5-turbo
-                        </label>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value="gpt-4o"
-                                checked={selectedModels.includes("gpt-4o")}
-                                onChange={() => handleModelChange("gpt-4o")}
-                            />
-                            gpt-4o
-                        </label>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value="o1-mini"
-                                checked={selectedModels.includes("o1-mini")}
-                                onChange={() => handleModelChange("o1-mini")}
-                            />
-                            o1-mini
-                        </label>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value="gpt-4o-mini"
-                                checked={selectedModels.includes("gpt-4o-mini")}
-                                onChange={() => handleModelChange("gpt-4o-mini")}
-                            />
-                            gpt-4o-mini
-                        </label>
-                    </div>
-
-                    <button className="generate-button" onClick={handleGenerateKey}>Generate Key</button>
-
-                    {generateKeyError && <p className="error-message">{generateKeyError}</p>}
-
-                    {generatedToken && (
-                        <div className="token-display">
-                            <p ref={tokenRef}>{generatedToken}</p>
-                            {!copied && (
-                                <button className="copy-button" onClick={handleCopyToken}>
-                                    <CopyIcon />
-                                </button>
-                            )}
-                            {copied && <div className="copied-message">Copied!</div>}
+                        <div className="model-selection">
+                            <span className="select-model-message">Select Models:</span>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value="gpt-3.5-turbo"
+                                    checked={selectedModels.includes("gpt-3.5-turbo")}
+                                    onChange={() => handleModelChange("gpt-3.5-turbo")}
+                                />
+                                gpt-3.5-turbo
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value="gpt-4o"
+                                    checked={selectedModels.includes("gpt-4o")}
+                                    onChange={() => handleModelChange("gpt-4o")}
+                                />
+                                gpt-4o
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value="o1-mini"
+                                    checked={selectedModels.includes("o1-mini")}
+                                    onChange={() => handleModelChange("o1-mini")}
+                                />
+                                o1-mini
+                            </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    value="gpt-4o-mini"
+                                    checked={selectedModels.includes("gpt-4o-mini")}
+                                    onChange={() => handleModelChange("gpt-4o-mini")}
+                                />
+                                gpt-4o-mini
+                            </label>
                         </div>
-                    )}
-                </div>
+
+                        <button className="generate-button" onClick={handleGenerateKey}>Generate Key</button>
+
+                        {generateKeyError && <p className="error-message">{generateKeyError}</p>}
+
+                        {generatedToken && (
+                            <div className="token-display">
+                                <p ref={tokenRef}>{generatedToken}</p>
+                                {!copied && (
+                                    <button className="copy-button" onClick={handleCopyToken}>
+                                        <CopyIcon />
+                                    </button>
+                                )}
+                                {copied && <div className="copied-message">Copied!</div>}
+                            </div>
+                        )}
+                    </div>
+                    <div className="user-keys-container">
+                        {userKeysError && <p className="error-message">{userKeysError}</p>}
+
+                        {userKeysData && userKeysData.keys && userKeysData.keys.length > 0 && (
+                            <div className="user-keys-display">
+                                <h3>Your Keys:</h3>
+                                <ul className="scrollable-key-list">
+                                    {userKeysData.keys.map((key, index) => (
+                                        <li key={index}>
+                                            <div className="key-summary" onClick={() => toggleKeyDetails(key.key_name)}>
+                                                <span>{key.key_name}</span>
+                                                {expandedKeys[key.key_name] ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+                                            </div>
+
+                                            {expandedKeys[key.key_name] && (
+                                                <div className="key-details">
+                                                    <p><strong>Models:</strong> {key.models.join(', ')}</p>
+                                                    <p><strong>Created At:</strong> {key.created_at}</p>
+                                                    <p><strong>Expires:</strong> {key.expires || 'Never'}</p>
+                                                    <p><strong>Spend:</strong> {key.spend}</p>
+                                                </div>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </>
             )}
         </div>
     );
